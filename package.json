@@ -15,22 +15,26 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@hookform/resolvers": "^3.0.1",
+    "@mui/joy": "^5.0.0-alpha.74",
+    "@mui/material": "^5.11.16",
     "next": "13.2.4",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-hook-form": "^7.43.9",
+    "react-json-view": "^1.21.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
-    "typescript": "5.0.3",
-    "husky": "^8.0.3",
-    "lint-staged": "^13.1.0",
-    "eslint": "8.37.0",
-    "prettier": "^2.8.4",
+    "@types/eslint": "^8.21.1",
     "@types/node": "18.15.11",
     "@types/react": "18.0.33",
     "@types/react-dom": "18.0.11",
-    "@types/eslint": "^8.21.1",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
+    "eslint": "8.37.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "13.2.4",
     "eslint-config-prettier": "^8.6.0",
@@ -38,6 +42,10 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0"
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.4",
+    "typescript": "5.0.3"
   }
 }
