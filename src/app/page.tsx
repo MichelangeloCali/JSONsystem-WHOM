@@ -2,8 +2,10 @@
 
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import { Forms } from '@/pages/Forms/Forms'
+import { GlobalStyle } from './global'
 
-const darkTheme = createTheme({
+const theme = createTheme({
   palette: {
     mode: 'dark',
   },
@@ -11,9 +13,10 @@ const darkTheme = createTheme({
 
 export default function Home() {
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
-      <h1>Hello</h1>
+      <Forms />
+      <GlobalStyle />
     </ThemeProvider>
   )
 }
