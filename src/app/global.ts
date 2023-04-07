@@ -43,7 +43,6 @@ export const GlobalStyle = createGlobalStyle`
     align-items: center;
     justify-content: center;
     width: 100vw;
-    height: 100vh;
     background: var(--background);
     -webkit-font-smoothing: antialiased;
   }
@@ -65,4 +64,8 @@ export const GlobalStyle = createGlobalStyle`
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+
+  
+
 `

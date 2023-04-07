@@ -2,7 +2,7 @@
 
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import { Forms } from '@/pages/Forms/Forms'
+import { Forms } from '@/components/Forms/Forms'
 import { GlobalStyle } from './global'
 
 const theme = createTheme({
