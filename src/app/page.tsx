@@ -2,8 +2,7 @@
 
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import { Forms } from '@/components/Forms/Forms'
-import { GlobalStyle } from './global'
+import { Forms } from '@/app/components/Forms/Forms'
 
 const theme = createTheme({
   palette: {
@@ -16,7 +15,6 @@ export default function Home() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Forms />
-      <GlobalStyle />
     </ThemeProvider>
   )
 }

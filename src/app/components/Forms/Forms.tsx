@@ -1,15 +1,17 @@
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import {
   FormControl,
   Box,
   Autocomplete,
   TextField,
   Button,
+  Container,
+  createTheme,
 } from '@mui/material'
-import { useForm } from 'react-hook-form'
-import { Container } from './Forms.style'
 
 export const Forms = () => {
+  const theme = createTheme()
   const { register, handleSubmit } = useForm()
   const [output, setOutput] = useState('')
 
@@ -19,6 +21,7 @@ export const Forms = () => {
   }
   console.log(output)
 
+  //valores obrigatorios: ID, Sistema, url base, url login, dominios,
   const sistemas = [
     'tjpe_pe',
     'tjma_1',
@@ -29,15 +32,56 @@ export const Forms = () => {
   ]
 
   return (
-    <Container>
+    <Container
+      sx={{
+        maxWidth: 'sm',
+        display: 'flex',
+        justifyContent: 'center',
+        marginTop: theme.spacing(4),
+        padding: theme.spacing(2.5),
+        borderRadius: '5px',
+        backgroundColor: '#282828',
+      }}
+    >
       <FormControl
         style={{
           display: 'flex',
           gap: '1rem',
-          width: '300px',
           borderRadius: '5px',
         }}
+        sx={{ maxWidth: 'sm' }}
       >
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '1rem',
+            width: 'auto',
+          }}
+        >
+          <TextField
+            type="name"
+            variant="outlined"
+            label="Sistemas"
+            {...register('Sistemas')}
+            size="small"
+          />
+
+          <TextField
+            type="name"
+            variant="outlined"
+            label="Sistemas"
+            {...register('Sistemas')}
+            size="small"
+          />
+        </Box>
+
+        <TextField
+          type="name"
+          variant="outlined"
+          label="Sistemas"
+          {...register('Sistemas')}
+        />
+
         <TextField
           type="name"
           variant="outlined"
@@ -64,14 +108,10 @@ export const Forms = () => {
       </FormControl>
       <Box
         sx={{
-          width: 300,
           color: 'black',
           height: 300,
           backgroundColor: 'white',
-          '&:hover': {
-            backgroundColor: 'primary.main',
-            opacity: [0.9, 0.8, 0.7],
-          },
+          maxWidth: 'sm',
         }}
       >
         {output}
