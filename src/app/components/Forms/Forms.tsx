@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import CryptoJS from 'crypto-js'
+import { JsonView } from '../JsonView/JsonView'
+import { FormSection } from '../FormSection'
 import {
   Box,
   Autocomplete,
   TextField,
-  Button,
   Container,
   createTheme,
   IconButton,
@@ -12,13 +16,9 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Delete, Send } from '@mui/icons-material'
-import { JsonView } from '../JsonView/JsonView'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { InputDinamic } from '../InputDinamic'
 
-//valores obrigatorios: ID, Sistema, url base, url login, dominios,
-const sistemas = [
+const proxy = [
   'tjpe_pe',
   'tjma_1',
   'tjsp_2',
@@ -30,34 +30,29 @@ const sistemas = [
 const createJsonFormSchema = z.object({
   ID: z
     .string()
-    .nonempty('O ID é obrigatório')
-    .min(4, 'O ID precisa de no mínimo 4 caracteres'),
-  SISTEMA: z
-    .string()
-    .nonempty('O Sistema é obrigatório')
-    .min(4, 'O Sistema precisa de no mínimo 4 caracteres'),
-  TRIBUNAL: z.string().optional(),
-  NOME_COMPLETO: z.string().optional(),
+    .nonempty('ID é obrigatório')
+    .min(4, 'ID com no mínimo 4 caracteres'),
+  SISTEMA: z.string(),
+  TRIBUNAL: z.string().min(4, 'Tribunal com no mínimo 4 caracteres'),
+  NOME_COMPLETO: z.string().min(4, 'Nome com no mínimo 4 caracteres'),
   URL_BASE: z
     .string()
     .url('Precisa ser uma URL válida')
-    .nonempty('A URL Base é obrigatória')
-    .min(10, 'A URL Base precisa de no mínimo 10 caracteres'),
+    .nonempty('URL Base é obrigatória')
+    .min(10, 'URL Base com no mínimo 10 caracteres'),
   URL_BUSCA: z
     .string()
     .url('Precisa ser uma URL válida')
-    .nonempty('A URL Busca é obrigatória')
-    .min(10, 'A URL Busca precisa de no mínimo 10 caracteres'),
+    .nonempty('URL Busca é obrigatória')
+    .min(10, 'URL Busca com no mínimo 10 caracteres'),
   URL_LOGIN: z
     .string()
     .url('Precisa ser uma URL válida')
-    .nonempty('A URL Login é obrigatória')
-    .min(10, 'A URL Login precisa de no mínimo 10 caracteres'),
+    .nonempty('URL Login é obrigatória')
+    .min(8, 'URL Login com no mínimo 8 caracteres')
+    .max(30, 'URL Login com no máximo 20 caracteres'),
   PROXY: z.string().optional(),
-  DOMINIOS: z
-    .array(z.string().min(10, 'O Domínio precisa de no mínimo 10 caracteres'))
-    .nonempty('O Domínio é obrigatório'),
-  TRIBUNAIS: z.string().optional(),
+  DOMINIOS: z.array(z.string()).nonempty('Domínio é obrigatório'),
   JS: z
     .array(
       z.object({
@@ -66,21 +61,43 @@ const createJsonFormSchema = z.object({
       })
     )
     .optional(),
+  fieldDinamic: z
+    .array(
+      z.object({
+        keyDinamic: z.string(),
+        valueDinamic: z.string(),
+      })
+    )
+    .optional(),
 })
 
-type CreateJsonFormSchema = z.infer<typeof createJsonFormSchema>
+export type CreateJsonFormSchema = z.infer<typeof createJsonFormSchema>
 
 export const Forms = () => {
   const theme = createTheme()
-  const [output, setOutput] = useState('')
+
+  const [output, setOutput] = useState<CreateJsonFormSchema>({
+    ID: '',
+    SISTEMA: '',
+    TRIBUNAL: '',
+    NOME_COMPLETO: '',
+    URL_BASE: '',
+    URL_BUSCA: '',
+    URL_LOGIN: '',
+    PROXY: '',
+    DOMINIOS: [''],
+    JS: [],
+  })
 
   const {
     register,
-    handleSubmit,
     formState: { errors },
     control,
+    getValues,
   } = useForm<CreateJsonFormSchema>({
     resolver: zodResolver(createJsonFormSchema),
+    mode: 'onChange',
+    defaultValues: output,
   })
 
   const {
@@ -101,9 +118,41 @@ export const Forms = () => {
     name: 'JS',
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCreateJson = (data: any) => setOutput(data)
-  const handleClearAllJson = () => setOutput('')
+  const handleUpdateOutput = () => {
+    const values = getValues()
+    let id = ''
+
+    const createId = () => {
+      const url = values.URL_BASE
+      const hashUrl = CryptoJS.SHA256(url).toString()
+      const tratedUrl = url
+        .replace(/^(https?:\/\/)?(www\.)?/, '')
+        .replace(/\.(com\.br|com|br\/)$/, '')
+        .replaceAll('.', '_')
+
+      return tratedUrl + '_' + hashUrl.substring(0, 4)
+    }
+
+    if (values.URL_BASE && !errors.URL_BASE) {
+      id = createId()
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const valuesFilter: any = { ...errors }
+    for (const key in valuesFilter) {
+      if (Object.prototype.hasOwnProperty.call(valuesFilter, key)) {
+        valuesFilter[key] = ''
+        console.log(valuesFilter)
+      }
+    }
+
+    setOutput({
+      ...values,
+      ID: id,
+      ...valuesFilter,
+      SISTEMA: values.SISTEMA.toUpperCase(),
+    })
+  }
 
   return (
     <Container
@@ -118,200 +167,199 @@ export const Forms = () => {
         borderRadius: '5px',
       }}
     >
-      <form
-        style={{
-          backgroundColor: '#282828',
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          maxWidth: 'sm',
-          maxHeight: '80vh',
-          overflowY: 'scroll',
-          padding: theme.spacing(3),
-          gap: '1rem',
-          borderRadius: '5px',
-        }}
-        onSubmit={handleSubmit(handleCreateJson)}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '1rem',
-            width: 'auto',
-          }}
-        >
-          <TextField
-            required
-            variant="filled"
-            color="success"
-            label="ID"
-            size="small"
-            sx={{
-              width: '100%',
-            }}
-            {...register('ID')}
-          />
+      <FormSection>
+        <TextField
+          disabled
+          variant="outlined"
+          color="success"
+          label="ID"
+          size="small"
+          value={output.ID}
+          sx={{ gridRow: 1 }}
+        />
 
-          <TextField
-            required
-            variant="filled"
-            color="success"
-            label="Sistema"
-            size="small"
-            sx={{
-              width: '100%',
-            }}
-            {...register('SISTEMA')}
-          />
-        </Box>
+        <Autocomplete
+          options={proxy}
+          renderInput={(params) => (
+            <TextField
+              error={!!errors.SISTEMA}
+              helperText={errors.SISTEMA?.message}
+              color="success"
+              {...params}
+              label="Sistema"
+              {...register('SISTEMA')}
+            />
+          )}
+          sx={{ width: '100%', gridRow: 1 }}
+          size="small"
+          onBlur={handleUpdateOutput}
+        />
 
         <TextField
           variant="outlined"
+          error={!!errors.TRIBUNAL}
+          helperText={errors.TRIBUNAL?.message}
           color="success"
           label="Tribunal"
           size="small"
           {...register('TRIBUNAL')}
+          onBlur={handleUpdateOutput}
+          sx={{ gridRow: 2, gridColumn: 'span 2' }}
         />
 
         <TextField
           variant="outlined"
+          error={!!errors.NOME_COMPLETO}
+          helperText={errors.NOME_COMPLETO?.message}
           label="Nome Completo"
           color="success"
           size="small"
           {...register('NOME_COMPLETO')}
+          onBlur={handleUpdateOutput}
+          sx={{ gridRow: 3, gridColumn: 'span 2' }}
         />
-
         <TextField
           required
-          type={'url'}
-          variant="standard"
-          color="success"
+          variant="outlined"
+          error={!!errors.URL_BASE}
+          helperText={errors.URL_BASE?.message}
           label="URL base"
+          color="success"
           size="small"
           {...register('URL_BASE')}
+          onBlur={handleUpdateOutput}
+          sx={{ gridRow: 4, gridColumn: 'span 2' }}
         />
-
         <TextField
           required
-          type="url"
-          variant="standard"
-          color="success"
+          variant="outlined"
+          error={!!errors.URL_BUSCA}
+          helperText={errors.URL_BUSCA?.message}
           label="URL busca"
+          color="success"
           size="small"
           {...register('URL_BUSCA')}
+          onBlur={handleUpdateOutput}
+          sx={{ gridRow: 5, gridColumn: 'span 2' }}
         />
-
         <TextField
           required
-          type="url"
-          variant="standard"
-          color="success"
+          variant="outlined"
+          error={!!errors.URL_LOGIN}
+          helperText={errors.URL_LOGIN?.message}
           label="URL login"
+          color="success"
           size="small"
           {...register('URL_LOGIN')}
+          onBlur={handleUpdateOutput}
+          sx={{ gridRow: 6, gridColumn: 'span 2' }}
         />
-
-        <TextField
-          type="url"
-          variant="standard"
-          color="success"
-          label="Proxy"
+        <Autocomplete
+          options={proxy}
+          renderInput={(params) => (
+            <TextField
+              error={!!errors.PROXY}
+              helperText={errors.PROXY?.message}
+              color="success"
+              {...params}
+              label="Proxy"
+              {...register('PROXY')}
+            />
+          )}
           size="small"
           {...register('PROXY')}
+          onBlur={handleUpdateOutput}
+          sx={{ gridRow: 7, gridColumn: 'span 2' }}
         />
 
         {/* array de string */}
         <Box
           sx={{
+            gridColumn: 'span 2',
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
           }}
         >
-          <Box
+          <InputLabel required>Domínios</InputLabel>
+          <IconButton
+            onClick={() => appendDomain(' ')}
+            size="small"
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
+              maxWidth: 'fit-content',
             }}
           >
-            <InputLabel required>Domínios</InputLabel>
-            <IconButton
-              onClick={() => appendDomain(' ')}
-              size="small"
-              sx={{
-                maxWidth: 'fit-content',
-              }}
-            >
-              <AddIcon />
-            </IconButton>
-          </Box>
-          {fieldsDomains.map((field, index) => (
-            <Box
-              key={field.id}
-              sx={{
-                mb: 1,
-                position: 'relative',
-                width: '100%',
-              }}
-            >
-              <TextField
-                required
-                variant="standard"
-                color="success"
-                label={`Domínio ${index + 1}`}
-                sx={{ width: '100%', marginTop: theme.spacing(1) }}
-                size="small"
-                {...register(`DOMINIOS.${index}`)}
-              />
-              {fieldsDomains.length === 1 ? (
-                <IconButton
-                  disabled
-                  onClick={() => removeDomain(index)}
-                  size="small"
-                  sx={{
-                    position: 'absolute',
-                    right: 0,
-                    bottom: '5px',
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  onClick={() => removeDomain(index)}
-                  size="small"
-                  sx={{
-                    position: 'absolute',
-                    right: 0,
-                    bottom: '5px',
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              )}
-            </Box>
-          ))}
+            <AddIcon />
+          </IconButton>
         </Box>
-
-        <Autocomplete
-          options={sistemas}
-          renderInput={(params) => (
+        {errors.DOMINIOS && (
+          <InputLabel
+            error
+            sx={{
+              fontSize: '13px',
+            }}
+          >
+            {errors.DOMINIOS?.message}
+          </InputLabel>
+        )}
+        {fieldsDomains.map((field, index) => (
+          <Box
+            key={field.id}
+            sx={{
+              mb: 1,
+              position: 'relative',
+              width: '100%',
+              gridColumn: 'span 2',
+            }}
+          >
             <TextField
+              required
+              variant="outlined"
+              error={!!errors.DOMINIOS}
+              label={`Domínio ${index + 1}`}
               color="success"
-              {...params}
-              label="Tribunais"
-              {...register('TRIBUNAIS')}
+              sx={{
+                width: '100%',
+                marginTop: theme.spacing(1),
+              }}
+              size="small"
+              {...register(`DOMINIOS.${index}`)}
+              onBlur={handleUpdateOutput}
             />
-          )}
-          size="small"
-          {...register('TRIBUNAIS')}
-        />
+            {fieldsDomains.length === 1 ? (
+              <IconButton
+                disabled
+                onClick={() => removeDomain(index)}
+                size="small"
+                sx={{
+                  position: 'absolute',
+                  right: 0,
+                  bottom: '5px',
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            ) : (
+              <IconButton
+                onClick={() => removeDomain(index)}
+                size="small"
+                sx={{
+                  position: 'absolute',
+                  right: 0,
+                  bottom: '5px',
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
+          </Box>
+        ))}
 
         {/* Array de objetos */}
         <Box
           sx={{
+            gridColumn: 'span 2',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -340,26 +388,43 @@ export const Forms = () => {
             <Box
               key={field.id}
               sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '7px',
                 mb: 1,
                 position: 'relative',
                 width: '100%',
               }}
             >
               <TextField
-                variant="standard"
-                color="success"
+                variant="outlined"
+                error={!!errors.JS?.[index]?.comando}
+                helperText={errors.JS?.[index]?.comando?.message}
                 label={`Comando ${index + 1}`}
-                sx={{ width: '100%' }}
+                color="success"
+                sx={{
+                  width: '100%',
+                  mb: '2px',
+                  mt: '2px',
+                }}
                 size="small"
                 {...register(`JS.${index}.comando`)}
+                onBlur={handleUpdateOutput}
               />
               <TextField
-                variant="standard"
-                color="success"
+                variant="outlined"
+                error={!!errors.JS?.[index]?.xpath}
+                helperText={errors.JS?.[index]?.xpath?.message}
                 label={`XPath ${index + 1}`}
-                sx={{ width: '100%' }}
+                color="success"
+                sx={{
+                  marginTop: '20px',
+                  width: '100%',
+                  mt: '2px',
+                }}
                 size="small"
                 {...register(`JS.${index}.xpath`)}
+                onBlur={handleUpdateOutput}
               />
               {fieldsJS.length === 1 ? (
                 <IconButton
@@ -369,7 +434,7 @@ export const Forms = () => {
                   sx={{
                     position: 'absolute',
                     right: 0,
-                    bottom: '50px',
+                    bottom: '55px',
                   }}
                 >
                   <DeleteIcon />
@@ -381,7 +446,7 @@ export const Forms = () => {
                   sx={{
                     position: 'absolute',
                     right: 0,
-                    bottom: '50px',
+                    bottom: '55px',
                   }}
                 >
                   <DeleteIcon />
@@ -391,38 +456,9 @@ export const Forms = () => {
           ))}
         </Box>
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: theme.spacing(3),
-            width: '100%',
-            paddingTop: theme.spacing(3),
-          }}
-        >
-          <Button
-            variant="outlined"
-            size="small"
-            endIcon={<Delete />}
-            color="error"
-            sx={{ width: '100%', padding: theme.spacing(1) }}
-            onClick={handleClearAllJson}
-          >
-            Limpar
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            size="small"
-            endIcon={<Send />}
-            color="success"
-            sx={{ width: '100%', color: '#282828', padding: theme.spacing(1) }}
-          >
-            Enviar
-          </Button>
-        </Box>
-      </form>
+        {/* Array do campo dinamico */}
+        <InputDinamic handleUpdateOutput={handleUpdateOutput} />
+      </FormSection>
 
       <Box
         sx={{
@@ -455,3 +491,29 @@ export const Forms = () => {
 //   DOMINIOS: [''],
 //   JS?: [{}]
 // }
+
+// AJUSTES
+// [X]padronizar inputs
+// [X]onChange atualizar JSON
+// [X]sitema com uppercase
+// [X]ID automatico (com tratamento e hash)
+// []campo dinamico ()
+// []proxy, sistema e JS com autocomplete.
+
+//GERANDO ID AUTOMATICAMENTE
+
+// EM PYTHON:
+// name = request.name
+// url_login = request.url
+// url_base = "{}://{}".format(urlparse(url_login).scheme, urlparse(url_login).netloc)
+// domains = [urlparse(url_login).netloc]
+// filtered = filter(lambda word: word not in ['www', 'gov', 'com', 'br'], urlparse(url_login).netloc.split('.'))
+// id = f"{'_'.join(filtered)}_{md5(url_login.encode()).hexdigest()[:4]}"
+
+//PASSO A PASSO:
+// 1- https://doc9.proofhub.com/
+// 2- doc9.proofhub.com
+// 3- doc9.proofhub
+// 4- doc9_proofhub
+// 5- doc9_proofhub_{hash(https://doc9.proofhub.com/)}
+// 6- doc9_proofhub_5a4b
