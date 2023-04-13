@@ -7,9 +7,10 @@ type Props = {
   sx?: SxProps
   size?: number
   error?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ref?: any
-  onChange?: any
-  onBluer?: any
+  onChange?: () => void
+  onBluer?: () => void
   pattern?: RegExp
   maxLength?: number
   minLength?: number
