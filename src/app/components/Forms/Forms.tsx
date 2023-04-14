@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import CryptoJS from 'crypto-js'
 import { JsonView } from '../JsonView/JsonView'
@@ -17,61 +16,9 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { InputDinamic } from '../InputDinamic'
-
-const proxy = [
-  'tjpe_pe',
-  'tjma_1',
-  'tjsp_2',
-  'procon',
-  'secretaria_fazenda',
-  'sefaz_ma',
-]
-
-const createJsonFormSchema = z.object({
-  ID: z
-    .string()
-    .nonempty('ID é obrigatório')
-    .min(4, 'ID com no mínimo 4 caracteres'),
-  SISTEMA: z.string(),
-  TRIBUNAL: z.string().min(4, 'Tribunal com no mínimo 4 caracteres'),
-  NOME_COMPLETO: z.string().min(4, 'Nome com no mínimo 4 caracteres'),
-  URL_BASE: z
-    .string()
-    .url('Precisa ser uma URL válida')
-    .nonempty('URL Base é obrigatória')
-    .min(10, 'URL Base com no mínimo 10 caracteres'),
-  URL_BUSCA: z
-    .string()
-    .url('Precisa ser uma URL válida')
-    .nonempty('URL Busca é obrigatória')
-    .min(10, 'URL Busca com no mínimo 10 caracteres'),
-  URL_LOGIN: z
-    .string()
-    .url('Precisa ser uma URL válida')
-    .nonempty('URL Login é obrigatória')
-    .min(8, 'URL Login com no mínimo 8 caracteres')
-    .max(30, 'URL Login com no máximo 20 caracteres'),
-  PROXY: z.string().optional(),
-  DOMINIOS: z.array(z.string()).nonempty('Domínio é obrigatório'),
-  JS: z
-    .array(
-      z.object({
-        comando: z.string(),
-        xpath: z.string(),
-      })
-    )
-    .optional(),
-  fieldDinamic: z
-    .array(
-      z.object({
-        keyDinamic: z.string(),
-        valueDinamic: z.string(),
-      })
-    )
-    .optional(),
-})
-
-export type CreateJsonFormSchema = z.infer<typeof createJsonFormSchema>
+import { createJsonFormSchema } from '@/utils/validationsSchema'
+import { proxy } from '@/utils/constants'
+import { CreateJsonFormSchema } from '@/types'
 
 export const Forms = () => {
   const theme = createTheme()
@@ -254,6 +201,7 @@ export const Forms = () => {
           onBlur={handleUpdateOutput}
           sx={{ gridRow: 6, gridColumn: 'span 2' }}
         />
+
         <Autocomplete
           options={proxy}
           renderInput={(params) => (
@@ -280,9 +228,12 @@ export const Forms = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
+            mb: '-10px',
           }}
         >
-          <InputLabel required>Domínios</InputLabel>
+          <InputLabel required sx={{ color: '#CC6633' }}>
+            Domínios
+          </InputLabel>
           <IconButton
             onClick={() => appendDomain(' ')}
             size="small"
@@ -307,7 +258,6 @@ export const Forms = () => {
           <Box
             key={field.id}
             sx={{
-              mb: 1,
               position: 'relative',
               width: '100%',
               gridColumn: 'span 2',
@@ -321,7 +271,6 @@ export const Forms = () => {
               color="success"
               sx={{
                 width: '100%',
-                marginTop: theme.spacing(1),
               }}
               size="small"
               {...register(`DOMINIOS.${index}`)}
@@ -371,9 +320,10 @@ export const Forms = () => {
               alignItems: 'center',
               justifyContent: 'space-between',
               width: '100%',
+              mb: '10px',
             }}
           >
-            <InputLabel>JS</InputLabel>
+            <InputLabel sx={{ color: '#CC6633' }}>JS</InputLabel>
             <IconButton
               onClick={() => appendJS({ comando: '', xpath: '' })}
               size="small"
@@ -473,7 +423,7 @@ export const Forms = () => {
           backgroundColor: '#282828',
         }}
       >
-        {output ? <JsonView src={output} /> : '{...}'}
+        {output ? <JsonView data={output} /> : '{...}'}
       </Box>
     </Container>
   )

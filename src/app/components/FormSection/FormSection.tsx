@@ -1,11 +1,13 @@
 import { createTheme } from '@mui/material'
 import React, { FunctionComponent, ReactNode } from 'react'
 
-type Props = {
+type FormSectionProps = {
   children?: ReactNode
 }
 
-export const FormSection: FunctionComponent<Props> = ({ children }) => {
+export const FormSection: FunctionComponent<FormSectionProps> = ({
+  children,
+}) => {
   const theme = createTheme()
 
   return (
@@ -19,7 +21,7 @@ export const FormSection: FunctionComponent<Props> = ({ children }) => {
         maxHeight: '80vh',
         overflowY: 'scroll',
         padding: theme.spacing(3),
-        gap: '1rem',
+        gap: '1.5rem',
         borderRadius: '5px',
       }}
     >

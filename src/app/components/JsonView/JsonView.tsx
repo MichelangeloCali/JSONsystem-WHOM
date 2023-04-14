@@ -1,9 +1,13 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
 import { Container } from '@mui/material'
+import { CreateJsonFormSchema } from '@/types'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const JsonView = ({ src }: any) => {
+type JsonViewProps = {
+  data: CreateJsonFormSchema
+}
+
+export const JsonView = ({ data }: JsonViewProps) => {
   return (
     <Container
       sx={{
@@ -23,7 +27,7 @@ export const JsonView = ({ src }: any) => {
           width: '100%',
           maxHeight: '80vh',
         }}
-        src={src}
+        src={data}
         name={false}
         theme={'monokai'}
         displayDataTypes={false}

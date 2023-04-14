@@ -12,33 +12,15 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CreateJsonFormSchema } from '../Forms'
+import { createJsonFormSchema } from '@/utils/validationsSchema'
 
-const createJsonFormSchema = z.object({
-  DOMINIOS: z.array(z.string()).nonempty('Domínio é obrigatório'),
-  JS: z
-    .array(
-      z.object({
-        comando: z.string(),
-        xpath: z.string(),
-      })
-    )
-    .optional(),
-  fieldDinamic: z
-    .array(
-      z.object({
-        keyDinamic: z.string(),
-        valueDinamic: z.string(),
-      })
-    )
-    .optional(),
-})
+type InputDinamicSchema = z.infer<typeof createJsonFormSchema>
 
-type Props = {
+type InputDinamicProps = {
   handleUpdateOutput: () => void
 }
 
-export const InputDinamic: FunctionComponent<Props> = ({
+export const InputDinamic: FunctionComponent<InputDinamicProps> = ({
   handleUpdateOutput,
 }) => {
   const [fieldDinamic, setFieldDinamic] = useState('')
@@ -50,7 +32,7 @@ export const InputDinamic: FunctionComponent<Props> = ({
     formState: { errors },
     control,
     getValues,
-  } = useForm<CreateJsonFormSchema>({
+  } = useForm<InputDinamicSchema>({
     resolver: zodResolver(createJsonFormSchema),
     mode: 'onChange',
   })
