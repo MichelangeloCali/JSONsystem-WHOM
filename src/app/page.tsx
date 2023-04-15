@@ -2,7 +2,7 @@
 
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import { Forms } from './components/Forms'
+import { Forms } from '../components/Forms'
 
 const theme = createTheme({
   palette: {

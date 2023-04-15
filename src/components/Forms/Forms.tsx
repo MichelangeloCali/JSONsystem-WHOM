@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import CryptoJS from 'crypto-js'
-import { JsonView } from '../JsonView/JsonView'
 import { FormSection } from '../FormSection'
+import { JsonView } from '../JsonView/JsonView'
+import { InputDinamic } from '../InputDinamic'
+import { proxy } from '@/utils/constants'
+import { createJsonFormSchema } from '@/utils/validationsSchema'
+import type { CreateJsonFormSchema } from '@/types'
 import {
   Box,
   Autocomplete,
@@ -15,10 +19,7 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { InputDinamic } from '../InputDinamic'
-import { createJsonFormSchema } from '@/utils/validationsSchema'
-import { proxy } from '@/utils/constants'
-import { CreateJsonFormSchema } from '@/types'
+import { InputFieldArrayString } from '../InputFieldArrayString'
 
 export const Forms = () => {
   const theme = createTheme()
@@ -221,7 +222,18 @@ export const Forms = () => {
         />
 
         {/* array de string */}
-        <Box
+        <InputFieldArrayString
+          name="Domínios"
+          domains={errors?.DOMINIOS}
+          message={errors.DOMINIOS?.message}
+          fieldsDomains={fieldsDomains}
+          error={!!errors.DOMINIOS}
+          register={{ ...register('DOMINIOS') }}
+          handleUpdateOutput={() => handleUpdateOutput}
+          appendDomain={() => appendDomain(' ')}
+          removeDomain={() => removeDomain()}
+        />
+        {/* <Box
           sx={{
             gridColumn: 'span 2',
             display: 'flex',
@@ -303,7 +315,7 @@ export const Forms = () => {
               </IconButton>
             )}
           </Box>
-        ))}
+        ))} */}
 
         {/* Array de objetos */}
         <Box
@@ -447,8 +459,12 @@ export const Forms = () => {
 // [X]onChange atualizar JSON
 // [X]sitema com uppercase
 // [X]ID automatico (com tratamento e hash)
-// []campo dinamico ()
-// []proxy, sistema e JS com autocomplete.
+// []Componentizar array string
+// []Componentizar array de objeto
+// []Componentizar campo dinamico chamando a lib Monaco
+// []JS com autocomplete com opcao default e opcao de escolha chamando Campo Dinamico.
+// []proxy, sistema com autocomplete.
+// []organizar estrutura projeto.
 
 //GERANDO ID AUTOMATICAMENTE
 

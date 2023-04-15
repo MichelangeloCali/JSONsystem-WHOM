@@ -1,5 +1,10 @@
-import { Box, SxProps, TextField } from '@mui/material'
-import { FunctionComponent, HTMLInputTypeAttribute } from 'react'
+import { Box, SxProps, TextField, Theme } from '@mui/material'
+import {
+  FunctionComponent,
+  HTMLInputTypeAttribute,
+  useEffect,
+  useState,
+} from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
 type InputProps = {
@@ -12,8 +17,9 @@ type InputProps = {
   type?: HTMLInputTypeAttribute
   error?: boolean
   helperText?: string
-  onBlur?: () => void
-  sx?: SxProps
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onBlur?: any
+  sx?: SxProps<Theme>
   register?: UseFormRegisterReturn
 }
 
@@ -31,6 +37,20 @@ export const InputForm: FunctionComponent<InputProps> = ({
   register,
   ...sx
 }) => {
+  const [inputValue, setInputValue] = useState('')
+
+  useEffect(() => {
+    if (onBlur) {
+      onBlur(inputValue)
+    }
+  }, [inputValue, onBlur])
+
+  const handleChange = (newValue: string) => {
+    if (!error) {
+      setInputValue(newValue)
+    }
+  }
+
   return (
     <Box>
       <TextField
@@ -43,7 +63,7 @@ export const InputForm: FunctionComponent<InputProps> = ({
         type={type}
         error={error}
         helperText={helperText}
-        onBlur={onBlur}
+        onBlur={(event) => handleChange(event.target.value)}
         {...register}
         {...sx}
       ></TextField>

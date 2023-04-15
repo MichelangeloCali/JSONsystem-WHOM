@@ -76,7 +76,7 @@ export const InputDinamic: FunctionComponent<InputDinamicProps> = ({
           onChange={handleSelectChange}
           size="small"
         >
-          <MenuItem value={'chaveValor'}>Chave valor</MenuItem>
+          <MenuItem value={'objeto'}>Chave valor</MenuItem>
           <MenuItem value={'arrayString'}>Array de string</MenuItem>
           <MenuItem value={'arrayObjeto'}>Array de objeto</MenuItem>
         </Select>
