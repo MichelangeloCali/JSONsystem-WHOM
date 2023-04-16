@@ -25,7 +25,7 @@ export const createJsonFormSchema = z.object({
     .min(8, 'URL Login com no mínimo 8 caracteres')
     .max(30, 'URL Login com no máximo 20 caracteres'),
   PROXY: z.string().optional(),
-  DOMINIOS: z.array(z.string()).nonempty('Domínio é obrigatório'),
+  DOMINIOS: z.array(z.string().min(4, 'Domínio com no mínimo 4 caracteres')),
   JS: z
     .array(
       z.object({

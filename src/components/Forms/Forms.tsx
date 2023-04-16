@@ -69,6 +69,7 @@ export const Forms = () => {
   const handleUpdateOutput = () => {
     const values = getValues()
     let id = ''
+    console.log(values)
 
     const createId = () => {
       const url = values.URL_BASE
@@ -90,7 +91,6 @@ export const Forms = () => {
     for (const key in valuesFilter) {
       if (Object.prototype.hasOwnProperty.call(valuesFilter, key)) {
         valuesFilter[key] = ''
-        console.log(valuesFilter)
       }
     }
 
@@ -223,15 +223,14 @@ export const Forms = () => {
 
         {/* array de string */}
         <InputFieldArrayString
-          name="Domínios"
-          domains={errors?.DOMINIOS}
-          message={errors.DOMINIOS?.message}
-          fieldsDomains={fieldsDomains}
-          error={!!errors.DOMINIOS}
-          register={{ ...register('DOMINIOS') }}
-          handleUpdateOutput={() => handleUpdateOutput}
-          appendDomain={() => appendDomain(' ')}
-          removeDomain={() => removeDomain()}
+          title="Domínios"
+          message={errors.DOMINIOS?.[0]?.message}
+          fields={fieldsDomains}
+          errors={!!errors.DOMINIOS}
+          register={register}
+          handleBlur={handleUpdateOutput}
+          appendItem={appendDomain}
+          removeItem={removeDomain}
         />
         {/* <Box
           sx={{

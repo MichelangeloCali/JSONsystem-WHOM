@@ -3,33 +3,33 @@ import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
   FieldValues,
+  RegisterOptions,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
   UseFormRegisterReturn,
 } from 'react-hook-form'
 
 type InputFieldArrayStringProps = {
-  name: string
-  domains?: object
+  title: string
   message?: string
-  fieldsDomains: Record<'id', string>[]
-  error: boolean
-  register: UseFormRegisterReturn<string>
-  handleUpdateOutput: () => void
-  appendDomain: UseFieldArrayAppend<FieldValues, string>
-  removeDomain: UseFieldArrayRemove
+  fields: Record<'id', string>[]
+  errors: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register: (name: any, options?: RegisterOptions) => UseFormRegisterReturn
+  handleBlur?: () => void
+  appendItem: UseFieldArrayAppend<FieldValues, string>
+  removeItem: UseFieldArrayRemove
 }
 
 export const InputFieldArrayString = ({
-  name,
-  domains,
+  title,
   message,
-  fieldsDomains,
-  error,
+  fields,
+  errors = false,
   register,
-  handleUpdateOutput,
-  appendDomain,
-  removeDomain,
+  handleBlur,
+  appendItem,
+  removeItem,
 }: InputFieldArrayStringProps) => {
   return (
     <>
@@ -44,10 +44,10 @@ export const InputFieldArrayString = ({
         }}
       >
         <InputLabel required sx={{ color: '#CC6633' }}>
-          {name}
+          {title}
         </InputLabel>
         <IconButton
-          onClick={() => appendDomain(' ')}
+          onClick={() => appendItem(' ')}
           size="small"
           sx={{
             maxWidth: 'fit-content',
@@ -56,19 +56,9 @@ export const InputFieldArrayString = ({
           <AddIcon />
         </IconButton>
       </Box>
-      {domains && (
-        <InputLabel
-          error
-          sx={{
-            fontSize: '13px',
-          }}
-        >
-          {message}
-        </InputLabel>
-      )}
-      {fieldsDomains.map((field, index) => (
+      {fields.map((field, index) => (
         <Box
-          key={index}
+          key={field.id}
           sx={{
             position: 'relative',
             width: '100%',
@@ -76,39 +66,39 @@ export const InputFieldArrayString = ({
           }}
         >
           <TextField
-            required
             variant="outlined"
-            error={error}
+            error={errors}
+            helperText={message}
             label={`Domínio ${index + 1}`}
             color="success"
             sx={{
               width: '100%',
             }}
             size="small"
-            {...register}
-            onBlur={handleUpdateOutput}
+            {...register(`DOMINIOS.${index}`)}
+            onBlur={handleBlur}
           />
-          {fieldsDomains.length === 1 ? (
+          {fields.length === 1 ? (
             <IconButton
               disabled
-              onClick={() => removeDomain(index)}
+              onClick={() => removeItem(index)}
               size="small"
               sx={{
                 position: 'absolute',
                 right: 0,
-                bottom: '5px',
+                bottom: errors ? '27px' : '5px',
               }}
             >
               <DeleteIcon />
             </IconButton>
           ) : (
             <IconButton
-              onClick={() => removeDomain(index)}
+              onClick={() => removeItem(index)}
               size="small"
               sx={{
                 position: 'absolute',
                 right: 0,
-                bottom: '5px',
+                bottom: errors ? '27px' : '5px',
               }}
             >
               <DeleteIcon />
