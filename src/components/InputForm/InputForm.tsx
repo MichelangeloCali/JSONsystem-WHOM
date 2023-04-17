@@ -1,72 +1,53 @@
-import { Box, SxProps, TextField, Theme } from '@mui/material'
-import {
-  FunctionComponent,
-  HTMLInputTypeAttribute,
-  useEffect,
-  useState,
-} from 'react'
-import { UseFormRegisterReturn } from 'react-hook-form'
+import { SxProps, TextField, Theme } from '@mui/material'
+import { RegisterOptions, UseFormRegisterReturn } from 'react-hook-form'
 
-type InputProps = {
+interface IInputForm {
+  required?: boolean
   disabled?: boolean
   label?: string
   value?: string
-  variant?: 'standard' | 'filled' | 'outlined'
-  color?: 'success' | 'error'
   size?: 'small' | 'medium'
-  type?: HTMLInputTypeAttribute
+  type?: string
   error?: boolean
   helperText?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onBlur?: any
+  register: (name: any, options?: RegisterOptions) => UseFormRegisterReturn
+  handleBlur?: () => void
   sx?: SxProps<Theme>
-  register?: UseFormRegisterReturn
 }
 
-export const InputForm: FunctionComponent<InputProps> = ({
+export const InputForm = ({
+  required = false,
   disabled = false,
   label,
   value,
-  variant = 'outlined',
-  color = 'success',
   size = 'small',
   type = 'text',
   error = false,
   helperText,
-  onBlur,
   register,
-  ...sx
-}) => {
-  const [inputValue, setInputValue] = useState('')
-
-  useEffect(() => {
-    if (onBlur) {
-      onBlur(inputValue)
-    }
-  }, [inputValue, onBlur])
-
-  const handleChange = (newValue: string) => {
-    if (!error) {
-      setInputValue(newValue)
-    }
-  }
+  handleBlur,
+  sx,
+  ...props
+}: IInputForm) => {
+  const registerValue = label?.toUpperCase().replaceAll(/\s+/g, '_')
 
   return (
-    <Box>
-      <TextField
-        disabled={disabled}
-        label={label}
-        value={value}
-        variant={variant}
-        color={color}
-        size={size}
-        type={type}
-        error={error}
-        helperText={helperText}
-        onBlur={(event) => handleChange(event.target.value)}
-        {...register}
-        {...sx}
-      ></TextField>
-    </Box>
+    <TextField
+      variant="outlined"
+      color="success"
+      required={required}
+      disabled={disabled}
+      label={label}
+      value={value}
+      size={size}
+      type={type}
+      error={error}
+      helperText={helperText}
+      {...register(registerValue)}
+      onBlur={handleBlur}
+      sx={{ ...sx }}
+      {...props}
+    ></TextField>
   )
 }

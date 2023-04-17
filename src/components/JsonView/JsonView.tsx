@@ -15,7 +15,11 @@ export const JsonView = ({ data }: JsonViewProps) => {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
+        maxWidth: 'sm',
         maxHeight: '80vh',
+        borderRadius: '5px',
+        overflowY: 'scroll',
+        backgroundColor: '#282828',
       }}
     >
       <ReactJson

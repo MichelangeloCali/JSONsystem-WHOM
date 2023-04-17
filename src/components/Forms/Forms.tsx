@@ -20,6 +20,7 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { InputFieldArrayString } from '../InputFieldArrayString'
+import { InputForm } from '../InputForm'
 
 export const Forms = () => {
   const theme = createTheme()
@@ -116,13 +117,11 @@ export const Forms = () => {
       }}
     >
       <FormSection>
-        <TextField
+        <InputForm
           disabled
-          variant="outlined"
-          color="success"
           label="ID"
-          size="small"
           value={output.ID}
+          register={register}
           sx={{ gridRow: 1 }}
         />
 
@@ -143,63 +142,48 @@ export const Forms = () => {
           onBlur={handleUpdateOutput}
         />
 
-        <TextField
-          variant="outlined"
+        <InputForm
+          label="Tribunal"
           error={!!errors.TRIBUNAL}
           helperText={errors.TRIBUNAL?.message}
-          color="success"
-          label="Tribunal"
-          size="small"
-          {...register('TRIBUNAL')}
-          onBlur={handleUpdateOutput}
+          register={register}
+          handleBlur={handleUpdateOutput}
           sx={{ gridRow: 2, gridColumn: 'span 2' }}
         />
 
-        <TextField
-          variant="outlined"
+        <InputForm
+          label="Nome Completo"
           error={!!errors.NOME_COMPLETO}
           helperText={errors.NOME_COMPLETO?.message}
-          label="Nome Completo"
-          color="success"
-          size="small"
-          {...register('NOME_COMPLETO')}
-          onBlur={handleUpdateOutput}
+          register={register}
+          handleBlur={handleUpdateOutput}
           sx={{ gridRow: 3, gridColumn: 'span 2' }}
         />
-        <TextField
-          required
-          variant="outlined"
+
+        <InputForm
+          label="URL base"
           error={!!errors.URL_BASE}
           helperText={errors.URL_BASE?.message}
-          label="URL base"
-          color="success"
-          size="small"
-          {...register('URL_BASE')}
-          onBlur={handleUpdateOutput}
+          register={register}
+          handleBlur={handleUpdateOutput}
           sx={{ gridRow: 4, gridColumn: 'span 2' }}
         />
-        <TextField
-          required
-          variant="outlined"
+
+        <InputForm
+          label="URL busca"
           error={!!errors.URL_BUSCA}
           helperText={errors.URL_BUSCA?.message}
-          label="URL busca"
-          color="success"
-          size="small"
-          {...register('URL_BUSCA')}
-          onBlur={handleUpdateOutput}
+          register={register}
+          handleBlur={handleUpdateOutput}
           sx={{ gridRow: 5, gridColumn: 'span 2' }}
         />
-        <TextField
-          required
-          variant="outlined"
+
+        <InputForm
+          label="URL login"
           error={!!errors.URL_LOGIN}
           helperText={errors.URL_LOGIN?.message}
-          label="URL login"
-          color="success"
-          size="small"
-          {...register('URL_LOGIN')}
-          onBlur={handleUpdateOutput}
+          register={register}
+          handleBlur={handleUpdateOutput}
           sx={{ gridRow: 6, gridColumn: 'span 2' }}
         />
 
@@ -232,89 +216,6 @@ export const Forms = () => {
           appendItem={appendDomain}
           removeItem={removeDomain}
         />
-        {/* <Box
-          sx={{
-            gridColumn: 'span 2',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            mb: '-10px',
-          }}
-        >
-          <InputLabel required sx={{ color: '#CC6633' }}>
-            Domínios
-          </InputLabel>
-          <IconButton
-            onClick={() => appendDomain(' ')}
-            size="small"
-            sx={{
-              maxWidth: 'fit-content',
-            }}
-          >
-            <AddIcon />
-          </IconButton>
-        </Box>
-        {errors.DOMINIOS && (
-          <InputLabel
-            error
-            sx={{
-              fontSize: '13px',
-            }}
-          >
-            {errors.DOMINIOS?.message}
-          </InputLabel>
-        )}
-        {fieldsDomains.map((field, index) => (
-          <Box
-            key={field.id}
-            sx={{
-              position: 'relative',
-              width: '100%',
-              gridColumn: 'span 2',
-            }}
-          >
-            <TextField
-              required
-              variant="outlined"
-              error={!!errors.DOMINIOS}
-              label={`Domínio ${index + 1}`}
-              color="success"
-              sx={{
-                width: '100%',
-              }}
-              size="small"
-              {...register(`DOMINIOS.${index}`)}
-              onBlur={handleUpdateOutput}
-            />
-            {fieldsDomains.length === 1 ? (
-              <IconButton
-                disabled
-                onClick={() => removeDomain(index)}
-                size="small"
-                sx={{
-                  position: 'absolute',
-                  right: 0,
-                  bottom: '5px',
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            ) : (
-              <IconButton
-                onClick={() => removeDomain(index)}
-                size="small"
-                sx={{
-                  position: 'absolute',
-                  right: 0,
-                  bottom: '5px',
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            )}
-          </Box>
-        ))} */}
 
         {/* Array de objetos */}
         <Box
@@ -421,44 +322,17 @@ export const Forms = () => {
         <InputDinamic handleUpdateOutput={handleUpdateOutput} />
       </FormSection>
 
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          maxWidth: 'sm',
-          maxHeight: '80vh',
-          borderRadius: '5px',
-          overflowY: 'scroll',
-          backgroundColor: '#282828',
-        }}
-      >
-        {output ? <JsonView data={output} /> : '{...}'}
-      </Box>
+      {output ? <JsonView data={output} /> : '{...}'}
     </Container>
   )
 }
-
-// const data = {
-//   ID: string,
-//   SISTEMA: string,
-//   TRIBUNAL?: string,
-//   NOME_COMPLETO?: string,
-//   URL_BASE: 'URL',
-//   URL_BUSCA: 'URL',
-//   URL_LOGIN: 'URL'
-//   PROXY?: 'URL'
-//   DOMINIOS: [''],
-//   JS?: [{}]
-// }
 
 // AJUSTES
 // [X]padronizar inputs
 // [X]onChange atualizar JSON
 // [X]sitema com uppercase
 // [X]ID automatico (com tratamento e hash)
-// []Componentizar array string
+// [X]Componentizar array string
 // []Componentizar array de objeto
 // []Componentizar campo dinamico chamando a lib Monaco
 // []JS com autocomplete com opcao default e opcao de escolha chamando Campo Dinamico.

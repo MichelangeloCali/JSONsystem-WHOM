@@ -8,8 +8,9 @@ import {
   UseFieldArrayRemove,
   UseFormRegisterReturn,
 } from 'react-hook-form'
+import { FunctionComponent } from 'react'
 
-type InputFieldArrayStringProps = {
+interface IInputFieldArrayString {
   title: string
   message?: string
   fields: Record<'id', string>[]
@@ -21,7 +22,9 @@ type InputFieldArrayStringProps = {
   removeItem: UseFieldArrayRemove
 }
 
-export const InputFieldArrayString = ({
+export const InputFieldArrayString: FunctionComponent<
+  IInputFieldArrayString
+> = ({
   title,
   message,
   fields,
@@ -30,7 +33,7 @@ export const InputFieldArrayString = ({
   handleBlur,
   appendItem,
   removeItem,
-}: InputFieldArrayStringProps) => {
+}) => {
   return (
     <>
       <Box
